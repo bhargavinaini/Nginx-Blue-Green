@@ -1,0 +1,44 @@
+{{- $activeColor := .Values.deployment.activeColor }}
+
+{{- range $color := list "blue" "green" }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $.Release.Name }}-{{ $color }}
+spec:
+  replicas: {{ $.Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ $.Release.Name }}
+      version: {{ $color }}
+  template:
+    metadata:
+      labels:
+        app: {{ $.Release.Name }}
+        version: {{ $color }}
+    spec:
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 2000
+      containers:
+      - name: app
+        image: "{{ $.Values.image.repository }}:{{ if eq $color "blue" }}{{ $.Values.image.tagBlue }}{{ else }}{{ $.Values.image.tagGreen }}{{ end }}"
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/my-app
+        - name: tmp-volume
+          mountPath: /tmp
+        securityContext:
+          runAsNonRoot: true
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+      volumes:
+      - name: config-volume
+        configMap:
+          name: {{ $.Release.Name }}-config
+      - name: tmp-volume
+        emptyDir: {}
+---
+{{- end }}

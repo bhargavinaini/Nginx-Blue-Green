@@ -1,0 +1,14 @@
+{{- range $color := list "blue" "green" }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $.Release.Name }}-{{ $color }}
+spec:
+  selector:
+    app: {{ $.Release.Name }}
+    version: {{ $color }}
+  ports:
+    - port: {{ $.Values.service.port }}
+      targetPort: 80
+---
+{{- end }}

@@ -1,0 +1,4 @@
+apiVersion: v2
+name: my-app
+description: A Blue-Green Deployment Example
+version: 0.1.0

@@ -1,0 +1,20 @@
+image:
+  repository: nginx
+  tagBlue: latest
+  tagGreen: latest
+
+replicaCount: 2
+
+deployment:
+  activeColor: green # Switch between blue or green
+
+service:
+  port: 80
+
+ingress:
+  enabled: true
+  host: myapp.local
+
+config:
+  setting1: true
+  setting2: "value"

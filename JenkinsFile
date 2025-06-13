@@ -1,0 +1,45 @@
+pipeline {
+  agent any
+
+  environment {
+    KUBECONFIG = credentials('kubeconfig-id')  // Jenkins credential ID for kubeconfig
+    HELM_HOME = "${HOME}/.helm"
+    NAMESPACE = 'default'
+    RELEASE_NAME = 'my-app'
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        checkout scm
+      }
+    }
+
+    stage('Helm Lint') {
+      steps {
+        sh 'helm lint my-app'
+      }
+    }
+
+    stage('Deploy with Helm') {
+      steps {
+        sh """
+          helm upgrade --install ${RELEASE_NAME} ./my-app \
+            --namespace ${NAMESPACE} \
+            --set deployment.activeColor=green \
+            --set image.tagGreen=latest \
+            --set image.tagBlue=latest
+        """
+      }
+    }
+  }
+
+  post {
+    success {
+      echo 'Deployment succeeded!'
+    }
+    failure {
+      echo 'Deployment failed!'
+    }
+  }
+}
