@@ -1,8 +1,12 @@
 pipeline {
   agent any
 
+  parameters {
+    string(name: 'TRAFFIC_PERCENT_GREEN', defaultValue: '50', description: 'Traffic percentage to route to green deployment')
+  }
+
   environment {
-    KUBECONFIG = credentials('kubeconfig-id')  // Jenkins credential ID for kubeconfig
+    KUBECONFIG = credentials('kubeconfig-id') 
     HELM_HOME = "${HOME}/.helm"
     NAMESPACE = 'default'
     RELEASE_NAME = 'my-app'
@@ -28,7 +32,9 @@ pipeline {
             --namespace ${NAMESPACE} \
             --set deployment.activeColor=green \
             --set image.tagGreen=latest \
-            --set image.tagBlue=latest
+            --set image.tagBlue=latest \
+            --set traffic.greenPercentage=${params.TRAFFIC_PERCENT_GREEN}
+
         """
       }
     }
