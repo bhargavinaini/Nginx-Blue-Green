@@ -16,10 +16,17 @@ Ensure the following tools are installed:
 - [Helm](https://helm.sh/docs/intro/install/)
 - [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 - [NGINX Ingress Controller](https://kubernetes.github.io/ingress-nginx/deploy/)
+- [Minikube](https://minikube.sigs.k8s.io/docs/start/) 
 
 ## 📁 Repository Structure
 
 Nginx-Blue-Green/
+
+├──Jenkins/
+
+│  ├── JenkinsFile
+
+│  ├── Jenkins_deployment.yaml
 
 ├──my-app/
 
@@ -41,7 +48,7 @@ Nginx-Blue-Green/
 
 
 - **my-app/**: Contains the Helm chart for deploying the application.
-- **Jenkinsfile**: Defines the CI/CD pipeline for automating deployments.
+- **Jenkins/**: Contains Jenkins CI/CD pipeline for automating deployments and Jenkins deployment file.
 
 ## 🛠️ Setup Instructions
 
@@ -101,25 +108,17 @@ Apply the ingress resource:
 kubectl apply -f nginx-traffic-router.yaml
 ```
 
-### 5. Shift Traffic to Green Environment
+### 5. Shift Traffic to Green Environment using Pipeline 
 
-To gradually shift traffic to the Green environment, update the ingress annotation:
-
-``` bash
-kubectl annotate ingress nginx-traffic-router \
-  nginx.ingress.kubernetes.io/canary-weight="50" --overwrite
-```
-This command directs 50% of the traffic to the Green environment.
+To gradually shift traffic to the Green environment, update the percentage parameter while triggering Jenkins pipeline
 
 ## 🧪 CI/CD Pipeline
 The repository includes a Jenkinsfile that automates the deployment process:
 
 Checkout: Retrieves the latest code.
-Deploy Blue: Deploys the Blue environment.
+Deploy Blue: Deploys the Blue environment. or 
 Deploy Green: Deploys the Green environment.
 Shift Traffic: Gradually shifts traffic to the Green environment.
-
-To use the Jenkinsfile, ensure your Jenkins instance is configured to use it, and that it has access to your Kubernetes cluster.
 
 ## Rollback to Blue Environment
 If issues arise with the Green environment, you can revert traffic to the Blue environment:
